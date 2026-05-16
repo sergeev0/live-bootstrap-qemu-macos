@@ -153,3 +153,7 @@ BSD `cut` treats that as invalid, so the patch changes it to portable
 ## Attribution
 
 Created as a weekend experiment with Codex and GPT-5.5.
+
+## License
+
+This wrapper/notes repo is released under the 0BSD license. See `LICENSE`.
