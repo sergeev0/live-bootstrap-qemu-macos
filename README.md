@@ -115,6 +115,55 @@ LIVE_BOOTSTRAP_CORES=2 \
 ./scripts/run-live-bootstrap-interactive.sh
 ```
 
+## Observability
+
+Future runs can opt into QEMU inspection sockets and a serial log:
+
+```sh
+LIVE_BOOTSTRAP_QEMU_OBSERVABILITY=1 ./scripts/run-live-bootstrap-interactive.sh
+```
+
+Defaults:
+
+```text
+QEMU monitor: /tmp/live-bootstrap-qemu-monitor.sock
+QMP socket:   /tmp/live-bootstrap-qemu-qmp.sock
+Serial log:   /tmp/live-bootstrap-serial.log
+```
+
+Connect to the human QEMU monitor with:
+
+```sh
+nc -U /tmp/live-bootstrap-qemu-monitor.sock
+```
+
+Useful non-destructive monitor commands:
+
+```text
+info status
+info cpus
+info registers
+```
+
+Watch the serial log with:
+
+```sh
+tail -f /tmp/live-bootstrap-serial.log
+```
+
+The socket/log paths can be overridden:
+
+```sh
+LIVE_BOOTSTRAP_QEMU_OBSERVABILITY=1 \
+LIVE_BOOTSTRAP_QEMU_MONITOR=/tmp/lb-monitor.sock \
+LIVE_BOOTSTRAP_QEMU_QMP=/tmp/lb-qmp.sock \
+LIVE_BOOTSTRAP_QEMU_SERIAL_LOG=/tmp/lb-serial.log \
+./scripts/run-live-bootstrap-interactive.sh
+```
+
+These options must be enabled before launching the VM; they cannot be attached
+to an already-running QEMU process.
+
 ## Manual command
 
 After the script has prepared the checkout, the equivalent interactive launch is:
