@@ -3,8 +3,20 @@
 Weekend experiment: boot the `live-bootstrap` kernel-bootstrap path from the
 `stage0` / `hex0` / `builder-hex0` chain inside QEMU on macOS.
 
-This repository contains the local glue used to run the experiment. It does not
-vendor `live-bootstrap` or generated disk images.
+This repository contains the local glue used to repeat the experiment. It does
+not vendor `live-bootstrap` or generated disk images.
+
+Upstream projects:
+
+- [`fosslinux/live-bootstrap`](https://github.com/fosslinux/live-bootstrap) is
+  the project doing the real bootstrap.
+- [`ironmeld/builder-hex0`](https://github.com/ironmeld/builder-hex0) provides
+  the tiny bootable kernel/hex0 compiler used by live-bootstrap's kernel
+  bootstrap path.
+- [`oriansj/stage0-posix`](https://github.com/oriansj/stage0-posix) provides
+  the stage0-posix bootstrap chain.
+
+This repo is just a macOS/QEMU wrapper and notes repo around those upstreams.
 
 ## What works
 
@@ -39,19 +51,26 @@ brew install qemu
 `git`, `make`, `python3`, and `xxd` are also needed. They are normally already
 available on a macOS development machine.
 
-## Run
+## Quick Start
 
 ```sh
+git clone https://github.com/sergeev0/live-bootstrap-qemu-macos.git
+cd live-bootstrap-qemu-macos
 ./scripts/run-live-bootstrap-interactive.sh
 ```
 
-The script uses:
+The script will:
 
-```sh
-https://samuelt.me/pub/live-bootstrap
-```
+- clone `https://github.com/fosslinux/live-bootstrap.git` into `./live-bootstrap`
+- initialize all recursive submodules
+- create `live-bootstrap/.venv`
+- install Python `requests` into that virtualenv
+- apply the macOS `builder-hex0` portability patch
+- generate the live-bootstrap QEMU disk image
+- open an interactive QEMU console window
 
-as the live-bootstrap mirror.
+By default it uses `https://samuelt.me/pub/live-bootstrap` as the
+live-bootstrap mirror.
 
 The generated checkout and VM image live under:
 
@@ -61,6 +80,40 @@ live-bootstrap/
 
 That directory is intentionally ignored by git because it contains downloaded
 distfiles and large sparse QEMU disk images.
+
+## What You Should See
+
+The QEMU window starts with SeaBIOS and then prints a lot of lines like:
+
+```text
+src
+./x86/hex0_x86.hex0
+```
+
+That is `builder-hex0` loading the embedded source filesystem into memory.
+
+After that, lines like this mean stage0-posix is running:
+
+```text
++> ./bootstrap-seeds/POSIX/x86/kaem-optional-seed ./x86/mescc-tools-seed-kaem.kaem
++> ./x86/artifact/hex0 ./x86/hex0_x86.hex0 ./x86/artifact/hex0
+```
+
+Later milestones include `M1`, `M2`, `M2-Planet`, and Mes. On Apple Silicon
+this is x86 software emulation, so continuing the full bootstrap can take a
+long time.
+
+## Configuration
+
+The launcher can be customized with environment variables:
+
+```sh
+LIVE_BOOTSTRAP_MIRROR=https://samuelt.me/pub/live-bootstrap \
+LIVE_BOOTSTRAP_TARGET=target-qemu-console \
+LIVE_BOOTSTRAP_RAM=4096 \
+LIVE_BOOTSTRAP_CORES=2 \
+./scripts/run-live-bootstrap-interactive.sh
+```
 
 ## Manual command
 
@@ -78,6 +131,16 @@ The QEMU window shows the VM console. Early output begins with many `src` lines
 while `builder-hex0` loads files into its memory filesystem. Later `+>` lines
 are `kaem` executing stage0-posix commands.
 
+## Re-running
+
+Re-run the script to continue using the same local `live-bootstrap` checkout and
+cached distfiles. Use a different `LIVE_BOOTSTRAP_TARGET` if you want a fresh
+QEMU disk image without deleting the previous one:
+
+```sh
+LIVE_BOOTSTRAP_TARGET=target-qemu-second-run ./scripts/run-live-bootstrap-interactive.sh
+```
+
 ## Notes
 
 The upstream helper assumes Linux/KVM and emits flags such as `-enable-kvm` and
@@ -86,4 +149,3 @@ The upstream helper assumes Linux/KVM and emits flags such as `-enable-kvm` and
 The `builder-hex0` Makefile also used GNU-style `cut file -f1 -d...` ordering.
 BSD `cut` treats that as invalid, so the patch changes it to portable
 `cut -f1 -d... file` ordering.
-

@@ -8,6 +8,13 @@ TARGET="${LIVE_BOOTSTRAP_TARGET:-target-qemu-console}"
 RAM="${LIVE_BOOTSTRAP_RAM:-4096}"
 CORES="${LIVE_BOOTSTRAP_CORES:-2}"
 
+for tool in git python3 make xxd; do
+  if ! command -v "$tool" >/dev/null 2>&1; then
+    echo "$tool not found. Install it before running this script." >&2
+    exit 1
+  fi
+done
+
 if ! command -v qemu-system-x86_64 >/dev/null 2>&1 && [ ! -x /opt/homebrew/bin/qemu-system-x86_64 ]; then
   echo "qemu-system-x86_64 not found. Install it with: brew install qemu" >&2
   exit 1
