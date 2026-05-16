@@ -1,0 +1,26 @@
+diff --git a/Makefile b/Makefile
+index 9d8279e..57194ae 100644
+--- a/Makefile
++++ b/Makefile
+@@ -75,17 +75,17 @@ BUILD/builder-hex0-mini-seed-built.bin: BUILD/builder-hex0-mini-seed.bin builder
+ BUILD/builder-hex0-mini-seed.bin: builder-hex0-mini.hex0 | BUILD
+ 	# uses cut to strip comments starting with pound or semicolon.
+ 	# uses xxd to convert hex to binary
+-	cut builder-hex0-mini.hex0 -f1 -d'#' | cut -f1 -d';' | xxd -r -p > BUILD/builder-hex0-mini-seed.bin
++	cut -f1 -d'#' builder-hex0-mini.hex0 | cut -f1 -d';' | xxd -r -p > BUILD/builder-hex0-mini-seed.bin
+ 
+ # builder-hex0 seed built using command line utilities
+ BUILD/builder-hex0-seed.bin: builder-hex0.hex0 | BUILD
+ 	# uses cut to strip comments starting with pound or semicolon.
+ 	# uses xxd to convert hex to binary
+-	cut builder-hex0.hex0 -f1 -d'#' | cut -f1 -d';' | xxd -r -p > BUILD/builder-hex0-seed.bin
++	cut -f1 -d'#' builder-hex0.hex0 | cut -f1 -d';' | xxd -r -p > BUILD/builder-hex0-seed.bin
+ 
+ # stage1 has an img extension to match other files in https://github.com/oriansj/bootstrap-seeds/tree/master/NATIVE/x86
+ BUILD/builder-hex0-x86-stage1.img: builder-hex0-x86-stage1.hex0 | BUILD
+-	cut builder-hex0-x86-stage1.hex0 -f1 -d'#' | cut -f1 -d';' | xxd -r -p > BUILD/builder-hex0-x86-stage1.img
++	cut -f1 -d'#' builder-hex0-x86-stage1.hex0 | cut -f1 -d';' | xxd -r -p > BUILD/builder-hex0-x86-stage1.img
+ 
+ BUILD:
+ 	mkdir BUILD
+

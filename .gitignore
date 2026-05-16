@@ -1,0 +1,9 @@
+.DS_Store
+
+# Generated/cached live-bootstrap outputs. These include 16G sparse disk images.
+live-bootstrap/
+
+# Local Python environments and caches.
+.venv/
+__pycache__/
+
