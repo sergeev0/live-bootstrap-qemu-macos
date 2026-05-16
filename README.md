@@ -149,3 +149,7 @@ The upstream helper assumes Linux/KVM and emits flags such as `-enable-kvm` and
 The `builder-hex0` Makefile also used GNU-style `cut file -f1 -d...` ordering.
 BSD `cut` treats that as invalid, so the patch changes it to portable
 `cut -f1 -d... file` ordering.
+
+## Attribution
+
+Created as a weekend experiment with Codex and GPT-5.5.
