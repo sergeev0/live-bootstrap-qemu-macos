@@ -24,6 +24,10 @@ for arg in "$@"; do
   esac
 done
 
+if [ "${LIVE_BOOTSTRAP_QEMU_ALLOW_REBOOT:-0}" != "1" ]; then
+  args+=(-no-reboot)
+fi
+
 if [ "${LIVE_BOOTSTRAP_QEMU_OBSERVABILITY:-0}" = "1" ]; then
   monitor_sock="${LIVE_BOOTSTRAP_QEMU_MONITOR:-/tmp/live-bootstrap-qemu-monitor.sock}"
   qmp_sock="${LIVE_BOOTSTRAP_QEMU_QMP:-/tmp/live-bootstrap-qemu-qmp.sock}"

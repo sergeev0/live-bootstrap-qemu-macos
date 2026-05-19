@@ -115,6 +115,14 @@ LIVE_BOOTSTRAP_CORES=2 \
 ./scripts/run-live-bootstrap-interactive.sh
 ```
 
+By default the wrapper adds `-no-reboot`. If the guest crashes or tries to
+reboot, QEMU will stop instead of silently starting the bootstrap over from the
+beginning. To allow guest reboots explicitly:
+
+```sh
+LIVE_BOOTSTRAP_QEMU_ALLOW_REBOOT=1 ./scripts/run-live-bootstrap-interactive.sh
+```
+
 ## Observability
 
 Future runs can opt into QEMU inspection sockets and a serial log:
